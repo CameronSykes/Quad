@@ -1,7 +1,7 @@
 import time
 import sys
 import RPi.GPIO as GPIO
-import Sensors.Globals as Globals
+import GlobalData as Globals
 
 class LightSensor:
     def __init__(self, lock, taskId, pin, name, threshold=28):

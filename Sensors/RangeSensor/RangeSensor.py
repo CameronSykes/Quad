@@ -3,7 +3,7 @@ import RPi.GPIO as GPIO
 import time
 import sys
 from multiprocessing import Lock
-import Sensors.GlobalData as Globals
+import GlobalData as Globals
 
 
 class RangeSensor:
@@ -35,7 +35,7 @@ class RangeSensor:
 
     def RangeSensor_AppMain():
         while Globals.AppRunStates[taskId] == RUN:
-            with self.lock
+            with self.lock:
                 self.lock.acquire()
     
                 distance = self.measure(quiet=False)

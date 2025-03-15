@@ -5,13 +5,13 @@ from LightSensor.LightSensor import LightSensor
 import dht11
 import RPi.GPIO as GPIO
 import time
-import Globals
+import GlobalData as Globals
 from multiprocessing import Process, Lock
 
 GPIO.setwarnings(False)
 GPIO.setmode(GPIO.BOARD)
 
-SensorLocks = [Lock() for l in range(NUM_LOCKS)]
+SensorLocks = [Lock() for l in range(NUM_SENSORS)]
 
 # Instantiate sensors
 LightSensors = [LightSensor(SensorLocks[0], 0,  8,     "Light Sensor 0")]

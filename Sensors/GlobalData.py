@@ -1,3 +1,5 @@
+from enum import Enum
+
 class RunStates(Enum):
     RESERVED = 0 # No sensor has been assigned for this slot yet
     INIT     = 1 # A sensor has been assigned for this slot but isn't running
@@ -8,5 +10,5 @@ class RunStates(Enum):
 
 NUM_SENSORS = 2
 
-
-global AppRunStates = [RunStates.RESERVED for sensor in range(NUM_SENSORS)]
+global AppRunStates
+AppRunStates = [RunStates.RESERVED for sensor in range(NUM_SENSORS)]
