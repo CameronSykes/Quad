@@ -2,14 +2,18 @@
 import RPi.GPIO as GPIO
 import time
 import sys
+from multiprocessing import Lock
 
 class RangeSensor:
-    def __init__(self, trig, echo, name, threshold=5):
+    def __init__(self, lock, trig, echo, name, threshold=5):
+        self.lock = lock
         self.TRIG = trig
         self.ECHO = echo
         self.name = name
         self.threshold = threshold  # In cm
-        
+
+        lock.acquire()
+
         GPIO.setwarnings(False)
         GPIO.setmode(GPIO.BOARD)
 
@@ -22,31 +26,20 @@ class RangeSensor:
         GPIO.setup(self.ECHO, GPIO.IN)
 
         print(f'{self.name} is initialized')
+        lock.release()
 
 
-    def RangeSensor_AppMain()
-       from multiprocessing import Process, Lock
+    def RangeSensor_AppMain():
+        with lock
+            lock.acquire()
+            
+            distance = self.measure(quiet=False)
 
-def f(l, i):
-    l.acquire()
-    try:
-        print('hello world', i)
-    finally:
-        l.release()
+            if distance < threshold:
+                # take corrective measures
+                print "TOO CLOSE"
 
-if __name__ == '__main__':
-    lock = Lock()
-
-    for num in range(10):
-        Process(target=f, args=(lock, num)).start() 
-
-    def isClose(self, lock, quiet=False):
-        lock.acquire()
-        distance = self.measure(quiet)
-        if distance < self.threshold:
-            return True
-        else:
-            return False
+            lock.release()
 
 
     def measure(self, quiet=True):
