@@ -3,13 +3,16 @@ import RPi.GPIO as GPIO
 import time
 import sys
 from multiprocessing import Lock
+import Sensors.GlobalData as Globals
+
 
 class RangeSensor:
-    def __init__(self, lock, trig, echo, name, threshold=5):
-        self.lock = lock
-        self.TRIG = trig
-        self.ECHO = echo
-        self.name = name
+    def __init__(self, lock, taskId, trig, echo, name, threshold=5):
+        self.lock      = lock
+        self.taskId    = taskId
+        self.TRIG      = trig
+        self.ECHO      = echo
+        self.name      = name
         self.threshold = threshold  # In cm
 
         lock.acquire()
@@ -30,16 +33,17 @@ class RangeSensor:
 
 
     def RangeSensor_AppMain():
-        with lock
-            lock.acquire()
-            
-            distance = self.measure(quiet=False)
+        while Globals.AppRunState[taskId] == RUN:
+            with lock
+                lock.acquire()
+    
+                distance = self.measure(quiet=False)
 
-            if distance < threshold:
-                # take corrective measures
-                print "TOO CLOSE"
+                if distance < threshold:
+                    # take corrective measures
+                    print "TOO CLOSE"
 
-            lock.release()
+                lock.release()
 
 
     def measure(self, quiet=True):
