@@ -15,7 +15,7 @@ class RangeSensor:
         self.name      = name
         self.threshold = threshold # In cm
 
-        lock.acquire()
+        self.lock.acquire()
 
         GPIO.setwarnings(False)
         GPIO.setmode(GPIO.BOARD)
@@ -29,21 +29,22 @@ class RangeSensor:
         GPIO.setup(self.ECHO, GPIO.IN)
 
         print(f'{self.name} is initialized')
-        lock.release()
+
+        self.lock.release()
 
 
     def RangeSensor_AppMain():
         while Globals.AppRunStates[taskId] == RUN:
-            with lock
-                lock.acquire()
+            with self.lock
+                self.lock.acquire()
     
                 distance = self.measure(quiet=False)
 
                 if distance < threshold:
                     # take corrective measures
-                    print "TOO CLOSE"
+                    print("TOO CLOSE")
 
-                lock.release()
+                self.lock.release()
 
 
     def measure(self, quiet=True):
