@@ -1,21 +1,41 @@
 import time
 import sys
 import RPi.GPIO as GPIO
+import Sensors.Globals as Globals
 
 class LightSensor:
-    def __init__(self, pin, name):
-        self.PIN = pin
-        self.name = name
-        # self.threshold = 28 # Experimentally determined to be light level at dusk
+    def __init__(self, lock, taskId, pin, name, threshold):
+        self.lock   = lock
+        self.taskId = taskId
+        self.PIN    = pin
+        self.name   = name
+        self.threshold = 28 # Experimentally determined to be light level at dusk
+
+        self.lock.acquire()
 
         GPIO.setwarnings(False)
 
         GPIO.setmode(GPIO.BOARD)
         print(f'{self.name} is initialized')
+
+        self.lock.release()
     
+    def LightSensor_AppMain():
+        while Globals.AppRunStates[taskId] == RUN:
+            with self.lock:
+                self.lock.acquire()
+
+                reading = self.measure(quiet=False)
+
+                if reading < threshold:
+                    # Take corrective action
+                    print("TOO DARK")
+
+                self.lock.release()
+
 
     # Returns time it took for the capacitor to discharge in int(seconds * 1000). Convert to large int to maintain SOME accuracy and allow isDark() to work on a range
-    def chargeTiming(self, quiet=False):
+    def measure(self, quiet=True):
         count = 0
         timeout = 60
 
@@ -37,12 +57,3 @@ class LightSensor:
             print(f"Light level for sensor on pin {self.PIN}:\t\t\t\t\t{count}")
 
         return count
-
-
-    # Less light/more darkness = higher reading
-    # Returns True if the reading is darker than the threshold
-    # def isDark(self):
-        # thresholdRange = list(range(self.threshold - 2, self.threshold + 2)) # Removes ringing
-        
-        # reading = self.chargeTiming()
-        # return any([reading > i for i in thresholdRange])
