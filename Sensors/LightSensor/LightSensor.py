@@ -4,12 +4,12 @@ import RPi.GPIO as GPIO
 import Sensors.Globals as Globals
 
 class LightSensor:
-    def __init__(self, lock, taskId, pin, name, threshold):
-        self.lock   = lock
-        self.taskId = taskId
-        self.PIN    = pin
-        self.name   = name
-        self.threshold = 28 # Experimentally determined to be light level at dusk
+    def __init__(self, lock, taskId, pin, name, threshold=28):
+        self.lock      = lock
+        self.taskId    = taskId
+        self.PIN       = pin
+        self.name      = name
+        self.threshold = threshold # Experimentally determined to be light level at dusk
 
         self.lock.acquire()
 
