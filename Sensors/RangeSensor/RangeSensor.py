@@ -13,7 +13,7 @@ class RangeSensor:
         self.TRIG      = trig
         self.ECHO      = echo
         self.name      = name
-        self.threshold = threshold  # In cm
+        self.threshold = threshold # In cm
 
         lock.acquire()
 
@@ -33,7 +33,7 @@ class RangeSensor:
 
 
     def RangeSensor_AppMain():
-        while Globals.AppRunState[taskId] == RUN:
+        while Globals.AppRunStates[taskId] == RUN:
             with lock
                 lock.acquire()
     
