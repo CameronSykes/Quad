@@ -2,14 +2,21 @@
 import RPi.GPIO as GPIO
 import time
 import sys
+from multiprocessing import Lock
+import GlobalData as gs
+
 
 class RangeSensor:
-    def __init__(self, trig, echo, name, threshold=5):
-        self.TRIG = trig
-        self.ECHO = echo
-        self.name = name
-        self.threshold = threshold  # In cm
-        
+    def __init__(self, lock, taskId, trig, echo, name, threshold=5):
+        self.lock      = lock
+        self.taskId    = taskId
+        self.TRIG      = trig
+        self.ECHO      = echo
+        self.name      = name
+        self.threshold = threshold # In cm
+
+        self.lock.acquire()
+
         GPIO.setwarnings(False)
         GPIO.setmode(GPIO.BOARD)
 
@@ -23,30 +30,22 @@ class RangeSensor:
 
         print(f'{self.name} is initialized')
 
+        self.lock.release()
 
-    def RangeSensor_AppMain()
-       from multiprocessing import Process, Lock
 
-def f(l, i):
-    l.acquire()
-    try:
-        print('hello world', i)
-    finally:
-        l.release()
+    def RangeSensor_AppMain(self):
+        while True:
+            print(self.name)
+            with self.lock:
+                self.lock.acquire(1)
+    
+                distance = self.measure(quiet=False)
 
-if __name__ == '__main__':
-    lock = Lock()
+                if distance < threshold:
+                    # take corrective measures
+                    print("TOO CLOSE")
 
-    for num in range(10):
-        Process(target=f, args=(lock, num)).start() 
-
-    def isClose(self, lock, quiet=False):
-        lock.acquire()
-        distance = self.measure(quiet)
-        if distance < self.threshold:
-            return True
-        else:
-            return False
+                self.lock.release()
 
 
     def measure(self, quiet=True):
@@ -66,10 +65,13 @@ if __name__ == '__main__':
 
         timeElapsed = endTime - startTime
         
-        # Speed of sound = 34300 cm/s
-        d = (34300 * timeElapsed) / 2
+        # Distance in meters
+        d_m = (gs.SOUND_SPEED * timeElapsed) / 2
+
+        # Distance in centimeters
+        d_cm = d_m * 100
 
         if not quiet:
-            print(f"{self.name} distance:\t\t\t\t{d}cm")
+            print(f"{self.name} distance:\t\t\t\t{d_cm}cm")
 
         return d
