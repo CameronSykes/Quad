@@ -3,7 +3,7 @@ import RPi.GPIO as GPIO
 import time
 import sys
 from multiprocessing import Lock
-import GlobalData as Globals
+import GlobalData as gs
 
 
 class RangeSensor:
@@ -33,10 +33,11 @@ class RangeSensor:
         self.lock.release()
 
 
-    def RangeSensor_AppMain():
-        while Globals.AppRunStates[taskId] == RUN:
+    def RangeSensor_AppMain(self):
+        while True:
+            print(self.name)
             with self.lock:
-                self.lock.acquire()
+                self.lock.acquire(1)
     
                 distance = self.measure(quiet=False)
 
@@ -64,10 +65,13 @@ class RangeSensor:
 
         timeElapsed = endTime - startTime
         
-        # Speed of sound = 34300 cm/s
-        d = (34300 * timeElapsed) / 2
+        # Distance in meters
+        d_m = (gs.SOUND_SPEED * timeElapsed) / 2
+
+        # Distance in centimeters
+        d_cm = d_m * 100
 
         if not quiet:
-            print(f"{self.name} distance:\t\t\t\t{d}cm")
+            print(f"{self.name} distance:\t\t\t\t{d_cm}cm")
 
         return d

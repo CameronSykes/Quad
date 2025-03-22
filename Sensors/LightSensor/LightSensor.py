@@ -1,7 +1,7 @@
 import time
 import sys
 import RPi.GPIO as GPIO
-import GlobalData as Globals
+import GlobalData as gs
 
 class LightSensor:
     def __init__(self, lock, taskId, pin, name, threshold=28):
@@ -20,10 +20,11 @@ class LightSensor:
 
         self.lock.release()
     
-    def LightSensor_AppMain():
-        while Globals.AppRunStates[taskId] == RUN:
+    def LightSensor_AppMain(self):
+        while True:
+            print(self.name)
             with self.lock:
-                self.lock.acquire()
+                self.lock.acquire(1)
 
                 reading = self.measure(quiet=False)
 
@@ -34,7 +35,7 @@ class LightSensor:
                 self.lock.release()
 
 
-    # Returns time it took for the capacitor to discharge in int(seconds * 1000). Convert to large int to maintain SOME accuracy and allow isDark() to work on a range
+    # Returns time it took for the capacitor to dischiarge in int(seconds * 1000)
     def measure(self, quiet=True):
         count = 0
         timeout = 60
