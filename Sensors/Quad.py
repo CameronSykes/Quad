@@ -5,29 +5,34 @@ from LightSensor.LightSensor import LightSensor
 import dht11
 import RPi.GPIO as GPIO
 import time
-import GlobalData as Globals
+import GlobalData as gs
 from multiprocessing import Process, Lock
 
 GPIO.setwarnings(False)
 GPIO.setmode(GPIO.BOARD)
 
-SensorLocks = [Lock() for l in range(NUM_SENSORS)]
+SensorLocks = [Lock() for l in range(gs.NUM_SENSORS)]
 
 # Instantiate sensors
 LightSensors = [LightSensor(SensorLocks[0], 0,  8,     "Light Sensor 0")]
 RangeSensors = [RangeSensor(SensorLocks[1], 1, 12, 10, "Range Sensor 0")]
+
+LightSensorProcesses = []
+RangeSensorProcesses = []
 
 # Acquire locks to confirm instantiation
 for lock in SensorLocks:
     lock.acquire()
     lock.release()
 
-# Spawn sensor processes
-for light_sensor in LightSensors:
-    Process(target=light_sensor.LightSensor_AppMain).start()
+# Create and start sensor processes
+for num, light_sensor in enumerate(LightSensors):
+    LightSensorProcesses.append(Process(target=light_sensor.LightSensor_AppMain))
+    LightSensorProcesses[num].start()
 
-for range_sensor in RangeSensor:
-    Process(target=range_sensor.RangeSensor_AppMain).start()
+for num, range_sensor in enumerate(RangeSensors):
+    RangeSensorProcesses.append(Process(target=range_sensor.RangeSensor_AppMain) )
+    RangeSensorProcesses[num].start()
 
 # Continually poll sensors
 try:
@@ -36,14 +41,24 @@ try:
         # a signal that the sensor is done with its operation
         for lock in SensorLocks:
             lock.acquire()
-            print("Lock acquired")
 
             # Release the lock so that the sensor can do its
             # next operation
             lock.release()
-            print("Lock released")
 except KeyboardInterrupt:
-    for sensor in range(NUM_SENSORS):
-        AppRunStates[sensor] = EXIT
+    for light_sensor in LightSensorProcesses:
+        while light_sensor.is_alive():
+            light_sensor.join()
+            time.sleep(.5)
+
+        print("joined LS")
+
+    for range_sensor in RangeSensorProcesses:
+        while range_sensor.is_alive():
+            range_sensor.join()
+            time.sleep(.5)
+
+        print("joined RS")
+
 
     GPIO.cleanup()
