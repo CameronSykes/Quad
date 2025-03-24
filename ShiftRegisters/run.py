@@ -32,10 +32,10 @@ def shift(value):
     # Latch shift register
     GPIO.output(LATCH_CLK, low)
     pulse(LATCH_CLK, high)
-    
+
     # Write value to A that will be shifted in
     GPIO.output(A, value)
-    
+
     # Pulse Shift Clock to shift data into the register
     pulse(SHIFT_CLK, low)
 
@@ -46,7 +46,7 @@ def reset():
 
     # Enable output
     GPIO.output(OUT_ENA, low)
-    
+
     # Reset shift register
     GPIO.output(RESET, low)
 
@@ -54,23 +54,9 @@ def reset():
 def pulse(pin, value):
     GPIO.output(pin, value)
     GPIO.output(pin, not value)
-    
 
-if __name__ == "__main__":
-    A             = 23 # GPIO
-    SHIFT_CLK     = 24 # GPIO
-    RESET         = 25 # GPIO
-    LATCH_CLK     = 8  # GPIO
-    OUT_ENA       = 7  # GPIO
-    
-    PIN_NUMBERING = GPIO.BCM
-    NUM_BLINKS    = 20
 
-    name          = f'({input("Name: ")}) - 74HC595'
-
-    GPIO.setwarnings(low)
-    GPIO.setmode(PIN_NUMBERING)
-
+def init():
     # Choose direction and default value for SHIFT_CLK
     GPIO.setup(SHIFT_CLK, GPIO.OUT)
     GPIO.output(SHIFT_CLK, low)
@@ -93,8 +79,27 @@ if __name__ == "__main__":
 
     print(f'{name} is initialized')
 
+
+if __name__ == "__main__":
+    A             = 23 # GPIO
+    SHIFT_CLK     = 24 # GPIO
+    RESET         = 25 # GPIO
+    LATCH_CLK     = 8  # GPIO
+    OUT_ENA       = 7  # GPIO
+
+    PIN_NUMBERING = GPIO.BCM
+    NUM_BLINKS    = 20
+
+    name          = f'({input("Name: ")}) - 74HC595'
+
+    GPIO.setwarnings(low)
+    GPIO.setmode(PIN_NUMBERING)
+
+    init()
+
     reset()
     time.sleep(3)
+
     for WriteVal in range(NUM_BLINKS):
         shift(WriteVal % 2)
 
@@ -103,4 +108,3 @@ if __name__ == "__main__":
             time.sleep(2)
         else:
             print(f'Expected Output: 0')
-
