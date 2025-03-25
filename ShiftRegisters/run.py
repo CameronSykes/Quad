@@ -50,14 +50,14 @@ def shift(value, quiet=True):
 
 
 def reset():
+    # Reset shift register
+    GPIO.output(RESET, low)
+
     # Latch the shift register contents
     pulse(pin=LATCH_CLK, value=low)
 
     # Enable output
     GPIO.output(OUT_ENA, low)
-
-    # Reset shift register
-    GPIO.output(RESET, low)
 
 
 def pulse(pin, value):
