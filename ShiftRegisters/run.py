@@ -108,5 +108,15 @@ if __name__ == "__main__":
     print('Resetting')
     reset()
 
-    for WriteVal in sys.argv[1]:
-        shift(WriteVal, quiet=False)
+    if len(sys.argv) == 1:
+        # Interactive input
+        try:
+            while True:
+                value = int(input("Input: "))
+                shift(value, quiet=False)
+        except KeyboardInterrupt:
+            pass
+    else:
+        # Command line input
+        for WriteVal in sys.argv[1]:
+            shift(WriteVal, quiet=False)
