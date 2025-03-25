@@ -107,8 +107,6 @@ if __name__ == "__main__":
 
     print('Resetting')
     reset()
-    time.sleep(3)
 
     for WriteVal in sys.argv[1]:
         shift(WriteVal, quiet=False)
-        time.sleep(2)
