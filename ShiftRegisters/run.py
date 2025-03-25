@@ -4,13 +4,13 @@ import RPi.GPIO as GPIO
 import time
 import sys
 
-low       = False
-high      = True
-A         = -1
-SHIFT_CLK = -1
-RESET     = -1
-LATCH_CLK = -1
-OUT_ENA   = -1
+low        = False
+high       = True
+A          = -1
+SHIFT_CLK  = -1
+RESET      = -1
+LATCH_CLK  = -1
+OUT_ENA    = -1
 
 def output():
     print('Print contents of register here')
@@ -27,26 +27,29 @@ def output():
 
 
 def shift(value, quiet=True):
-    value = int(value)
+    try:
+        value = int(value)
 
-    # Enable output
-    GPIO.output(OUT_ENA, low)
+        # Enable output
+        GPIO.output(OUT_ENA, low)
 
-    # Tie reset to disabled
-    GPIO.output(RESET, high)
+        # Tie reset to disabled
+        GPIO.output(RESET, high)
 
-    # Write value to A that will be shifted in
-    GPIO.output(A, value)
+        # Write value to A that will be shifted in
+        GPIO.output(A, value)
 
-    # Pulse Shift Clock to shift data into the register
-    pulse(SHIFT_CLK, low)
+        # Pulse Shift Clock to shift data into the register
+        pulse(SHIFT_CLK, low)
 
-    # Latch shift register
-    GPIO.output(LATCH_CLK, low)
-    pulse(LATCH_CLK, high)
+        # Latch shift register
+        GPIO.output(LATCH_CLK, low)
+        pulse(LATCH_CLK, high)
 
-    if not quiet:
-        print(f'Wrote {value}')
+        if not quiet:
+            print(f'Wrote {value}')
+    except ValueError:
+        print('!!! Please provide valid inut')
 
 
 def reset():
@@ -113,11 +116,8 @@ if __name__ == "__main__":
         # Interactive input
         try:
             while True:
-                try:
-                    value = int(input("Input: "))
-                    shift(value)
-                except ValueError:
-                    print('!!! Please provide a valid input')
+                value = int(input("Input: "))
+                shift(value)
         except KeyboardInterrupt:
             print()
             print('Exiting')
