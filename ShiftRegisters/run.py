@@ -2,6 +2,7 @@
 
 import RPi.GPIO as GPIO
 import time
+import sys
 
 low       = False
 high      = True
@@ -25,19 +26,27 @@ def output():
     print(f'{OUT_ENA:03d}, {PIN_NUMBERING}\t\t13')
 
 
-def shift(value):
+def shift(value, quiet=True):
+    value = int(value)
+
+    # Enable output
+    GPIO.output(OUT_ENA, low)
+
     # Tie reset to disabled
     GPIO.output(RESET, high)
-
-    # Latch shift register
-    GPIO.output(LATCH_CLK, low)
-    pulse(LATCH_CLK, high)
 
     # Write value to A that will be shifted in
     GPIO.output(A, value)
 
     # Pulse Shift Clock to shift data into the register
     pulse(SHIFT_CLK, low)
+
+    # Latch shift register
+    GPIO.output(LATCH_CLK, low)
+    pulse(LATCH_CLK, high)
+
+
+    print(f'Wrote {value}')
 
 
 def reset():
@@ -59,7 +68,7 @@ def pulse(pin, value):
 def init():
     # Choose direction and default value for SHIFT_CLK
     GPIO.setup(SHIFT_CLK, GPIO.OUT)
-    GPIO.output(SHIFT_CLK, low)
+    # GPIO.output(SHIFT_CLK, low)
 
     # Choose direction and default value for A
     GPIO.setup(A, GPIO.OUT)
@@ -88,23 +97,16 @@ if __name__ == "__main__":
     OUT_ENA       = 7  # GPIO
 
     PIN_NUMBERING = GPIO.BCM
-    NUM_BLINKS    = 20
 
     name          = f'({input("Name: ")}) - 74HC595'
 
-    GPIO.setwarnings(low)
+    GPIO.setwarnings(False)
     GPIO.setmode(PIN_NUMBERING)
 
     init()
 
+    print('Resetting')
     reset()
-    time.sleep(3)
 
-    for WriteVal in range(NUM_BLINKS):
-        shift(WriteVal % 2)
-
-        if WriteVal > 7:
-            print(f'Expected Output: {(WriteVal - 7) % 2}')
-            time.sleep(2)
-        else:
-            print(f'Expected Output: 0')
+    for WriteVal in sys.argv[1]:
+        shift(WriteVal, quiet=False)
