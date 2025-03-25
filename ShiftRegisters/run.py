@@ -116,7 +116,7 @@ if __name__ == "__main__":
                     value = int(input("Input: "))
                     shift(value)
                 except ValueError:
-                    pass
+                    print('!!! Please provide a valid input')
         except KeyboardInterrupt:
             print()
             print('Exiting')
