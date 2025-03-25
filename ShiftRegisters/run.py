@@ -65,7 +65,7 @@ def pulse(pin, value):
     GPIO.output(pin, not value)
 
 
-def init():
+def init(quiet=False):
     # Choose direction and default value for SHIFT_CLK
     GPIO.setup(SHIFT_CLK, GPIO.OUT)
     # GPIO.output(SHIFT_CLK, low)
@@ -86,7 +86,8 @@ def init():
     GPIO.setup(OUT_ENA, GPIO.OUT)
     GPIO.output(OUT_ENA, low)
 
-    print(f'{name} is initialized')
+    if not quiet:
+        print(f'{name} is initialized')
 
 
 if __name__ == "__main__":
@@ -98,7 +99,7 @@ if __name__ == "__main__":
 
     PIN_NUMBERING = GPIO.BCM
 
-    name          = f'({input("Name: ")}) - 74HC595'
+    name          = f'(74HC595) - {input("Name: ")}'
 
     GPIO.setwarnings(False)
     GPIO.setmode(PIN_NUMBERING)
