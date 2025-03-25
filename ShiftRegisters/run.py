@@ -45,8 +45,8 @@ def shift(value, quiet=True):
     GPIO.output(LATCH_CLK, low)
     pulse(LATCH_CLK, high)
 
-
-    print(f'Wrote {value}')
+    if not quiet:
+        print(f'Wrote {value}')
 
 
 def reset():
@@ -108,5 +108,19 @@ if __name__ == "__main__":
     print('Resetting')
     reset()
 
-    for WriteVal in sys.argv[1]:
-        shift(WriteVal, quiet=False)
+    if len(sys.argv) == 1:
+        # Interactive input
+        try:
+            while True:
+                try:
+                    value = int(input("Input: "))
+                    shift(value)
+                except ValueError:
+                    print('!!! Please provide a valid input')
+        except KeyboardInterrupt:
+            print()
+            print('Exiting')
+    else:
+        # Command line input
+        for WriteVal in sys.argv[1]:
+            shift(WriteVal, quiet=False)
