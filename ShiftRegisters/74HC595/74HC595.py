@@ -41,9 +41,25 @@ class 74HC595:
         self.reset()
 
     def __str__(self):
-        print('Print contents of register here')
-        print(f'Primary pin #{self.primaryShiftClock} ==> ShiftClock, pin 11')
-        print(f'Primary pin #{self.primary_A} ==> A, pin 14')
+        print(f'=== {self.name} pin configuration ===')
+        print(f'{"GPIO.BOARD" if self.PIN_NUMBERING == GPIO.BOARD else "GPIO.BCM"} pint numbering mode'
+        print('RPi pin\t\t74HC595 pin')
+        print('====================================')
+        print(f'{self.A:02d}     \t\t14')
+        print(f'{self.SHIFT_CLK:02d}     \t\t11')
+        print(f'{self.RESET:02d}     \t\t10')
+        print(f'{self.LATCH_CLK:02d},    \t\t12')
+        print(f'{self.OUTPUT_ENA},    \t\t13')
+
+#        InputOutputString = ""
+#        print()
+#        print('Register contents')
+#        print('=================')
+#        for i in range(InputQueue.qsize()):
+#            InputOutputString += f'{InputQueue.get_nowait()} '
+
+#        print(InputOutputString)
+#        print()
 
 
     def pulse(self, pin, value):
