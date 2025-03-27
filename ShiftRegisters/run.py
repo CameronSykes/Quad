@@ -38,6 +38,9 @@ def output():
 
 def shift(value, quiet=True):
     try:
+        # Make input value an integer
+        value = int(value)
+
         # Boolean-ize input
         value = int(value == True)
 
@@ -66,7 +69,7 @@ def shift(value, quiet=True):
         if not quiet:
             print(f'Wrote {value}')
     except ValueError:
-        print('!!! Please provide valid inut')
+        print('!!! Please provide valid input')
 
 
 def reset():
@@ -130,9 +133,9 @@ if __name__ == "__main__":
     print('Resetting')
     reset()
 
-    if len(sys.argv) == 1:
-        # Interactive input
-        try:
+    try:
+        if len(sys.argv) == 1:
+            # Interactive input
             while True:
                 if LoopCount % 8 == 0 and LoopCount != 0:
                     output()
@@ -141,10 +144,13 @@ if __name__ == "__main__":
                     shift(value)
 
                 LoopCount += 1
-        except KeyboardInterrupt:
-            print()
-            print('Exiting')
-    else:
-        # Command line input
-        for WriteVal in sys.argv[1]:
-            shift(WriteVal, quiet=False)
+        else:
+            # Command line input
+            for Position, WriteVal in enumerate(sys.argv[1]):
+                shift(WriteVal)
+
+                if Position % 7 == 0 and Position != 0:
+                    output()
+    except KeyboardInterrupt:
+        print()
+        print('Exiting')
