@@ -83,13 +83,6 @@ def reset():
     GPIO.output(OUT_ENA, low)
 
 
-def pulse(pin, value):
-    GPIO.output(pin, value)
-    GPIO.output(pin, not value)
-
-
-def init(quiet=False):
-
 if __name__ == "__main__":
     A             = 23 # GPIO
     SHIFT_CLK     = 24 # GPIO

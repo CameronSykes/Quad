@@ -46,6 +46,11 @@ class 74HC595:
         print(f'Primary pin #{self.primary_A} ==> A, pin 14')
 
 
+    def pulse(pin, value):
+        GPIO.output(pin, value)
+        GPIO.output(pin, not value)
+
+
     def shift(self, value):
         # Write value to pin 14 (A) that will be shifted in
         GPIO.output(self.A, value)
