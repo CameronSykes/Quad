@@ -46,17 +46,17 @@ class 74HC595:
         print(f'Primary pin #{self.primary_A} ==> A, pin 14')
 
 
-    def pulse(pin, value):
+    def pulse(self, pin, value):
         GPIO.output(pin, value)
         GPIO.output(pin, not value)
 
 
-    def reset():
+    def reset(self):
         # Reset shift register
         GPIO.output(RESET, low)
 
         # Latch the shift register contents
-        pulse(pin=LATCH_CLK, value=low)
+        self.pulse(pin=LATCH_CLK, value=low)
 
         # Enable output
         GPIO.output(OUT_ENA, low)
