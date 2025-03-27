@@ -66,7 +66,7 @@ def shift(value, quiet=True):
         if not quiet:
             print(f'Wrote {value}')
     except ValueError:
-        print('!!! Please provide valid inut')
+        print('!!! Please provide valid input')
 
 
 def reset():
@@ -130,9 +130,9 @@ if __name__ == "__main__":
     print('Resetting')
     reset()
 
-    if len(sys.argv) == 1:
-        # Interactive input
-        try:
+    try:
+        if len(sys.argv) == 1:
+            # Interactive input
             while True:
                 if LoopCount % 8 == 0 and LoopCount != 0:
                     output()
@@ -141,10 +141,13 @@ if __name__ == "__main__":
                     shift(value)
 
                 LoopCount += 1
-        except KeyboardInterrupt:
-            print()
-            print('Exiting')
-    else:
-        # Command line input
-        for WriteVal in sys.argv[1]:
-            shift(WriteVal, quiet=False)
+        else:
+            # Command line input
+            for WriteVal in sys.argv[1]:
+                # print(sys.argv[1])
+                print(f'Value to write: {WriteVal}, type: {type(WriteVal)}')
+                input("Press enter to move on")
+                shift(WriteVal, quiet=False)
+    except KeyboardInterrupt:
+        print()
+        print('Exiting')
