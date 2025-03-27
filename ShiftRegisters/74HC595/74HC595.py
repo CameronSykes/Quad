@@ -6,23 +6,22 @@ _high = True
 class 74HC595:
     def __init__(self, name, use_board_nums=True, a, shift_clk, reset, latch_clk, output_ena):
         self.name          = f'(74HC595) - {name}'
+        self.PIN_NUMBERING = GPIO.BOARD if use_board_nums else GPIO.BCM
         self.A             = a
         self.SHIFT_CLK     = shift_clk
         self.RESET         = reset
         self.LATCH_CLK     = latch_clk
         self.OUTPUT_ENA    = output_ena
-        self.PIN_NUMBERING = GPIO.BOARD if use_board_nums else GPIO.BCM
     
         GPIO.setwarnings(False)
         GPIO.setmode(self.PIN_NUMBERING)
 
-        # Choose direction and default value for SHIFT_CLK
-        GPIO.setup(SHIFT_CLK, GPIO.OUT)
-        # GPIO.output(SHIFT_CLK, low)
-
         # Choose direction and default value for A
         GPIO.setup(A, GPIO.OUT)
         GPIO.output(A, low)
+
+        # Choose direction and default value for SHIFT_CLK
+        GPIO.setup(SHIFT_CLK, GPIO.OUT)
 
         # Choose direction and default value for RESET
         GPIO.setup(RESET, GPIO.OUT)
@@ -39,7 +38,7 @@ class 74HC595:
         print(f'{name} is initialized')
 
         print(f'Resetting {name}')
-        reset()
+        self.reset()
 
     def __str__(self):
         print('Print contents of register here')
