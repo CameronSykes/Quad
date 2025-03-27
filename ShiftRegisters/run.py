@@ -38,6 +38,9 @@ def output():
 
 def shift(value, quiet=True):
     try:
+        # Make input value an integer
+        value = int(value)
+
         # Boolean-ize input
         value = int(value == True)
 
@@ -143,11 +146,11 @@ if __name__ == "__main__":
                 LoopCount += 1
         else:
             # Command line input
-            for WriteVal in sys.argv[1]:
-                # print(sys.argv[1])
-                print(f'Value to write: {WriteVal}, type: {type(WriteVal)}')
-                input("Press enter to move on")
-                shift(WriteVal, quiet=False)
+            for Position, WriteVal in enumerate(sys.argv[1]):
+                shift(WriteVal)
+
+                if Position % 7 == 0 and Position != 0:
+                    output()
     except KeyboardInterrupt:
         print()
         print('Exiting')
