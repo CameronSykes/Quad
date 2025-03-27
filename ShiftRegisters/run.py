@@ -3,6 +3,7 @@
 import RPi.GPIO as GPIO
 import time
 import sys
+from queue import Queue
 
 low        = False
 high       = True
@@ -11,24 +12,34 @@ SHIFT_CLK  = -1
 RESET      = -1
 LATCH_CLK  = -1
 OUT_ENA    = -1
+InputQueue = Queue(maxsize=8)
 
 def output():
-    print('Print contents of register here')
+    InputOutputString = ""
+    print()
+    print('Register contents')
+    print('=================')
+    for i in range(InputQueue.qsize()):
+        InputOutputString += f'{InputQueue.get_nowait()} '
+
+    print(InputOutputString)
+    print()
 
 
-    PIN_NUMBERING = 'GPIO.BCM  ' if PIN_NUMBERING == GPIO.BCM else 'GPIO.BOARD'
-    print('RPi pin      \t\t74HC595 pin')
-    print('====================================')
-    print(f'{SHIFT_CLK:03d}, {PIN_NUMBERING}\t\t11')
-    print(f'{A:03d}, {PIN_NUMBERING}\t\t14')
-    print(f'{RESET:03d}, {PIN_NUMBERING}\t\t10')
-    print(f'{LATCH_CLOCK:03d}, {PIN_NUMBERING}\t\t12')
-    print(f'{OUT_ENA:03d}, {PIN_NUMBERING}\t\t13')
+#    PIN_NUMBERING = 'GPIO.BCM  ' if PIN_NUMBERING == GPIO.BCM else 'GPIO.BOARD'
+#    print('RPi pin      \t\t74HC595 pin')
+#    print('====================================')
+#    print(f'{SHIFT_CLK:03d}, {PIN_NUMBERING}\t\t11')
+#    print(f'{A:03d}, {PIN_NUMBERING}\t\t14')
+#    print(f'{RESET:03d}, {PIN_NUMBERING}\t\t10')
+#    print(f'{LATCH_CLOCK:03d}, {PIN_NUMBERING}\t\t12')
+#    print(f'{OUT_ENA:03d}, {PIN_NUMBERING}\t\t13')
 
 
 def shift(value, quiet=True):
     try:
-        value = int(value)
+        # Boolean-ize input
+        value = int(value == True)
 
         # Enable output
         GPIO.output(OUT_ENA, low)
@@ -45,6 +56,12 @@ def shift(value, quiet=True):
         # Latch shift register
         GPIO.output(LATCH_CLK, low)
         pulse(LATCH_CLK, high)
+
+        try:
+            InputQueue.put_nowait(value)
+        except Full:
+            InputQueue.get_nowait()
+            InputQueue.put_nowait(value)
 
         if not quiet:
             print(f'Wrote {value}')
@@ -103,6 +120,7 @@ if __name__ == "__main__":
     PIN_NUMBERING = GPIO.BCM
 
     name          = f'(74HC595) - {input("Name: ")}'
+    LoopCount     = 0
 
     GPIO.setwarnings(False)
     GPIO.setmode(PIN_NUMBERING)
@@ -116,8 +134,13 @@ if __name__ == "__main__":
         # Interactive input
         try:
             while True:
-                value = int(input("Input: "))
-                shift(value)
+                if LoopCount % 8 == 0 and LoopCount != 0:
+                    output()
+                else:
+                    value = int(input("Input: "))
+                    shift(value)
+
+                LoopCount += 1
         except KeyboardInterrupt:
             print()
             print('Exiting')
