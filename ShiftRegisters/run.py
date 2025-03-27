@@ -72,17 +72,6 @@ def shift(value, quiet=True):
         print('!!! Please provide valid input')
 
 
-def reset():
-    # Reset shift register
-    GPIO.output(RESET, low)
-
-    # Latch the shift register contents
-    pulse(pin=LATCH_CLK, value=low)
-
-    # Enable output
-    GPIO.output(OUT_ENA, low)
-
-
 if __name__ == "__main__":
     A             = 23 # GPIO
     SHIFT_CLK     = 24 # GPIO

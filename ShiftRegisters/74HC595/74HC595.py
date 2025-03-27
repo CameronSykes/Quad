@@ -51,6 +51,17 @@ class 74HC595:
         GPIO.output(pin, not value)
 
 
+    def reset():
+        # Reset shift register
+        GPIO.output(RESET, low)
+
+        # Latch the shift register contents
+        pulse(pin=LATCH_CLK, value=low)
+
+        # Enable output
+        GPIO.output(OUT_ENA, low)
+
+
     def shift(self, value):
         # Write value to pin 14 (A) that will be shifted in
         GPIO.output(self.A, value)
