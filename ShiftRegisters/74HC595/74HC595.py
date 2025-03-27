@@ -62,10 +62,37 @@ class 74HC595:
         GPIO.output(OUT_ENA, low)
 
 
-    def shift(self, value):
-        # Write value to pin 14 (A) that will be shifted in
-        GPIO.output(self.A, value)
+    def shift(self, value, quiet=True):
+        try:
+            # Make input value an integer
+            value = int(value)
 
-        # Pulse pin 11 (Shift Clock) to shift data into the register
-       GPIO.output(self.SHIFT_CLK, True)
-       GPIO.output(self.SHIFT_CLK, False)
+            # Boolean-ize input
+            value = int(value == True)
+
+            # Enable output
+            GPIO.output(OUT_ENA, low)
+
+            # Tie reset to disabled
+            GPIO.output(RESET, high)
+
+            # Write value to A that will be shifted in
+            GPIO.output(A, value)
+
+            # Pulse Shift Clock to shift data into the register
+            self.pulse(SHIFT_CLK, low)
+
+            # Latch shift register
+            GPIO.output(LATCH_CLK, low)
+            self.pulse(LATCH_CLK, high)
+
+            try:
+                InputQueue.put_nowait(value)
+            except Full:
+                InputQueue.get_nowait()
+                InputQueue.put_nowait(value)
+
+            if not quiet:
+                print(f'Wrote {value}')
+        except ValueError:
+            print('!!! Please provide valid input')

@@ -36,42 +36,6 @@ def output():
 #    print(f'{OUT_ENA:03d}, {PIN_NUMBERING}\t\t13')
 
 
-def shift(value, quiet=True):
-    try:
-        # Make input value an integer
-        value = int(value)
-
-        # Boolean-ize input
-        value = int(value == True)
-
-        # Enable output
-        GPIO.output(OUT_ENA, low)
-
-        # Tie reset to disabled
-        GPIO.output(RESET, high)
-
-        # Write value to A that will be shifted in
-        GPIO.output(A, value)
-
-        # Pulse Shift Clock to shift data into the register
-        pulse(SHIFT_CLK, low)
-
-        # Latch shift register
-        GPIO.output(LATCH_CLK, low)
-        pulse(LATCH_CLK, high)
-
-        try:
-            InputQueue.put_nowait(value)
-        except Full:
-            InputQueue.get_nowait()
-            InputQueue.put_nowait(value)
-
-        if not quiet:
-            print(f'Wrote {value}')
-    except ValueError:
-        print('!!! Please provide valid input')
-
-
 if __name__ == "__main__":
     A             = 23 # GPIO
     SHIFT_CLK     = 24 # GPIO
