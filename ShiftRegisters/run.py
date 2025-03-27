@@ -89,29 +89,6 @@ def pulse(pin, value):
 
 
 def init(quiet=False):
-    # Choose direction and default value for SHIFT_CLK
-    GPIO.setup(SHIFT_CLK, GPIO.OUT)
-    # GPIO.output(SHIFT_CLK, low)
-
-    # Choose direction and default value for A
-    GPIO.setup(A, GPIO.OUT)
-    GPIO.output(A, low)
-
-    # Choose direction and default value for RESET
-    GPIO.setup(RESET, GPIO.OUT)
-    GPIO.output(RESET, high)
-
-    # Choose direction and default value for LATCH_CLK
-    GPIO.setup(LATCH_CLK, GPIO.OUT)
-    GPIO.output(LATCH_CLK, high)
-
-    # Choose direction and default value for OUT_ENA
-    GPIO.setup(OUT_ENA, GPIO.OUT)
-    GPIO.output(OUT_ENA, low)
-
-    if not quiet:
-        print(f'{name} is initialized')
-
 
 if __name__ == "__main__":
     A             = 23 # GPIO
@@ -124,14 +101,6 @@ if __name__ == "__main__":
 
     name          = f'(74HC595) - {input("Name: ")}'
     LoopCount     = 0
-
-    GPIO.setwarnings(False)
-    GPIO.setmode(PIN_NUMBERING)
-
-    init()
-
-    print('Resetting')
-    reset()
 
     try:
         if len(sys.argv) == 1:
