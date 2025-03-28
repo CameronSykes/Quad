@@ -5,7 +5,7 @@ _high = True
 
 class SR_74HC595:
     def __init__(self, name, a, shift_clk, reset, latch_clk, output_ena, use_board_nums=True):
-        self.name          = f'(74HC595) - {name}'
+        self.name          = f'{name} (74HC595)'
         self.PIN_NUMBERING = GPIO.BOARD if use_board_nums else GPIO.BCM
         self.A             = a
         self.SHIFT_CLK     = shift_clk
@@ -31,14 +31,15 @@ class SR_74HC595:
         GPIO.setup(self.LATCH_CLK, GPIO.OUT)
         GPIO.output(self.LATCH_CLK, _high)
 
-        # Choose direction and default value for OUT_ENA
-        GPIO.setup(self.OUT_ENA, GPIO.OUT)
-        GPIO.output(self.OUT_ENA, _low)
+        # Choose direction and default value for OUTPUT_ENA
+        GPIO.setup(self.OUTPUT_ENA, GPIO.OUT)
+        GPIO.output(self.OUTPUT_ENA, _low)
 
-        print(f'{self.name} is initialized')
-
-        print(f'Resetting {self.name}')
         self.reset()
+        print(f'{self.name}: Reset')
+
+        print(f'{self.name}: Initialized')
+
 
     def __str__(self):
         PinMode = "GPIO.BOARD" if self.PIN_NUMBERING == GPIO.BOARD else "GPIO.BCM"
@@ -77,7 +78,7 @@ class SR_74HC595:
         self.pulse(pin=self.LATCH_CLK, value=_low)
 
         # Enable output
-        GPIO.output(self.OUT_ENA, _low)
+        GPIO.output(self.OUTPUT_ENA, _low)
 
 
     def shift(self, value, quiet=True):
@@ -89,7 +90,7 @@ class SR_74HC595:
             value = int(value == True)
 
             # Enable output
-            GPIO.output(self.OUT_ENA, _low)
+            GPIO.output(self.OUTPUT_ENA, _low)
 
             # Tie reset to disabled
             GPIO.output(self.RESET, _high)
