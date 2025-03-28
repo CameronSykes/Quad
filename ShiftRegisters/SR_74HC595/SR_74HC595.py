@@ -41,7 +41,7 @@ class SR_74HC595:
         print(f'{self.name}: Initialized')
 
 
-    def __str__(self):
+    def output(self):
         PinMode = "GPIO.BOARD" if self.PIN_NUMBERING == GPIO.BOARD else "GPIO.BCM"
 
         print(f'=== {self.name} pin configuration ===')
