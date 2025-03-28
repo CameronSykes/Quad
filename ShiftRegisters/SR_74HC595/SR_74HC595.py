@@ -44,15 +44,18 @@ class SR_74HC595:
     def output(self):
         PinMode = "GPIO.BOARD" if self.PIN_NUMBERING == GPIO.BOARD else "GPIO.BCM"
 
+        print()
         print(f'=== {self.name} pin configuration ===')
         print(f'{PinMode} pin numbering mode')
+        print()
         print("RPi pin\t\t74HC595 pin")
-        print("====================================")
+        print("===========================")
         print(f'{self.A:02d}     \t\t14')
         print(f'{self.SHIFT_CLK:02d}     \t\t11')
         print(f'{self.RESET:02d}     \t\t10')
-        print(f'{self.LATCH_CLK:02d},    \t\t12')
-        print(f'{self.OUTPUT_ENA},    \t\t13')
+        print(f'{self.LATCH_CLK:02d}     \t\t12')
+        print(f'{self.OUTPUT_ENA:02d}     \t\t13')
+        print()
 
 #        InputOutputString = ""
 #        print()
