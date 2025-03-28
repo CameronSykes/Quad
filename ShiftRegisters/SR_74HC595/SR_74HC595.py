@@ -3,8 +3,8 @@ import RPi.GPIO as GPIO
 _low  = False
 _high = True
 
-class 74HC595:
-    def __init__(self, name, use_board_nums=True, a, shift_clk, reset, latch_clk, output_ena):
+class SR_74HC595:
+    def __init__(self, name, a, shift_clk, reset, latch_clk, output_ena, use_board_nums=True):
         self.name          = f'(74HC595) - {name}'
         self.PIN_NUMBERING = GPIO.BOARD if use_board_nums else GPIO.BCM
         self.A             = a
@@ -17,34 +17,36 @@ class 74HC595:
         GPIO.setmode(self.PIN_NUMBERING)
 
         # Choose direction and default value for A
-        GPIO.setup(A, GPIO.OUT)
-        GPIO.output(A, low)
+        GPIO.setup(self.A, GPIO.OUT)
+        GPIO.output(self.A, _low)
 
         # Choose direction and default value for SHIFT_CLK
-        GPIO.setup(SHIFT_CLK, GPIO.OUT)
+        GPIO.setup(self.SHIFT_CLK, GPIO.OUT)
 
         # Choose direction and default value for RESET
-        GPIO.setup(RESET, GPIO.OUT)
-        GPIO.output(RESET, high)
+        GPIO.setup(self.RESET, GPIO.OUT)
+        GPIO.output(self.RESET, _high)
 
         # Choose direction and default value for LATCH_CLK
-        GPIO.setup(LATCH_CLK, GPIO.OUT)
-        GPIO.output(LATCH_CLK, high)
+        GPIO.setup(self.LATCH_CLK, GPIO.OUT)
+        GPIO.output(self.LATCH_CLK, _high)
 
         # Choose direction and default value for OUT_ENA
-        GPIO.setup(OUT_ENA, GPIO.OUT)
-        GPIO.output(OUT_ENA, low)
+        GPIO.setup(self.OUT_ENA, GPIO.OUT)
+        GPIO.output(self.OUT_ENA, _low)
 
-        print(f'{name} is initialized')
+        print(f'{self.name} is initialized')
 
-        print(f'Resetting {name}')
+        print(f'Resetting {self.name}')
         self.reset()
 
     def __str__(self):
+        PinMode = "GPIO.BOARD" if self.PIN_NUMBERING == GPIO.BOARD else "GPIO.BCM"
+
         print(f'=== {self.name} pin configuration ===')
-        print(f'{"GPIO.BOARD" if self.PIN_NUMBERING == GPIO.BOARD else "GPIO.BCM"} pint numbering mode'
-        print('RPi pin\t\t74HC595 pin')
-        print('====================================')
+        print(f'{PinMode} pin numbering mode')
+        print("RPi pin\t\t74HC595 pin")
+        print("====================================")
         print(f'{self.A:02d}     \t\t14')
         print(f'{self.SHIFT_CLK:02d}     \t\t11')
         print(f'{self.RESET:02d}     \t\t10')
@@ -69,13 +71,13 @@ class 74HC595:
 
     def reset(self):
         # Reset shift register
-        GPIO.output(RESET, low)
+        GPIO.output(self.RESET, _low)
 
         # Latch the shift register contents
-        self.pulse(pin=LATCH_CLK, value=low)
+        self.pulse(pin=self.LATCH_CLK, value=_low)
 
         # Enable output
-        GPIO.output(OUT_ENA, low)
+        GPIO.output(self.OUT_ENA, _low)
 
 
     def shift(self, value, quiet=True):
@@ -87,26 +89,26 @@ class 74HC595:
             value = int(value == True)
 
             # Enable output
-            GPIO.output(OUT_ENA, low)
+            GPIO.output(self.OUT_ENA, _low)
 
             # Tie reset to disabled
-            GPIO.output(RESET, high)
+            GPIO.output(self.RESET, _high)
 
             # Write value to A that will be shifted in
-            GPIO.output(A, value)
+            GPIO.output(self.A, value)
 
             # Pulse Shift Clock to shift data into the register
-            self.pulse(SHIFT_CLK, low)
+            self.pulse(self.SHIFT_CLK, _low)
 
             # Latch shift register
-            GPIO.output(LATCH_CLK, low)
-            self.pulse(LATCH_CLK, high)
+            GPIO.output(self.LATCH_CLK, _low)
+            self.pulse(self.LATCH_CLK, _high)
 
-            try:
-                InputQueue.put_nowait(value)
-            except Full:
-                InputQueue.get_nowait()
-                InputQueue.put_nowait(value)
+#            try:
+#                InputQueue.put_nowait(value)
+#            except Full:
+#                InputQueue.get_nowait()
+#                InputQueue.put_nowait(value)
 
             if not quiet:
                 print(f'Wrote {value}')
